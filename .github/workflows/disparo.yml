@@ -1,0 +1,22 @@
+name: Disparo Automatico NEOTRIBUTO
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+jobs:
+  disparar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Instalar bibliotecas
+        run: pip install requests
+      - name: Executar motor de disparos
+        env:
+          WEBHOOK_PLANILHA: ${{ secrets.WEBHOOK_PLANILHA }}
+          CONTAS_SMTP_JSON: ${{ secrets.CONTAS_SMTP_JSON }}
+        run: python disparador.py
