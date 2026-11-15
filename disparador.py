@@ -2,17 +2,11 @@ import os
 import json
 import time
 import random
-import smtplib
 import urllib.parse
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 import requests
 
 WEBHOOK_PLANILHA = os.environ.get("WEBHOOK_PLANILHA", "")
 TOKEN_SEGURANCA  = "NEOTRIBUTO2026"
-NOME_REMETENTE   = "NEOTRIBUTO | Inteligência Tributária"
-EMAIL_RESPOSTA   = "contato@neotributo.com.br"
-
 CONTAS_SMTP_JSON = os.environ.get("CONTAS_SMTP_JSON", "[]")
 
 def montar_html(empresa, cnpj):
@@ -85,10 +79,6 @@ def montar_html(empresa, cnpj):
 
 def executar():
     contas = json.loads(CONTAS_SMTP_JSON)
-    if not contas or not WEBHOOK_PLANILHA:
-        print("Configure WEBHOOK_PLANILHA e CONTAS_SMTP_JSON nos Secrets do GitHub.")
-        return
-
     resp = requests.get(f"{WEBHOOK_PLANILHA}?action=fila_github&token={TOKEN_SEGURANCA}", timeout=30)
     fila_leads = resp.json()
     print(f"Leads carregados da planilha: {len(fila_leads)}")
@@ -98,36 +88,33 @@ def executar():
         if ponteiro >= len(fila_leads):
             break
         email_user  = conta["email"]
-        senha_app   = conta["senha"]
-        limite_hora = int(conta.get("limite_hora", 5))
+        url_disparo = conta["url"]
+        limite_hora = int(conta.get("limite_hora", 4))
+        enviados_conta = 0
 
-        try:
-            with smtplib.SMTP_SSL("://gmail.com", 465, timeout=20) as smtp:
-                smtp.login(email_user, senha_app)
-                enviados_conta = 0
-                while enviados_conta < limite_hora and ponteiro < len(fila_leads):
-                    lead = fila_leads[ponteiro]
-                    ponteiro += 1
+        while enviados_conta < limite_hora and ponteiro < len(fila_leads):
+            lead = fila_leads[ponteiro]
+            ponteiro += 1
+            assunto = f"Estimativa de economia tributária para {lead['empresa']}"
+            r = requests.post(url_disparo, json={
+                "token": TOKEN_SEGURANCA,
+                "para": lead["email"],
+                "assunto": assunto,
+                "html": montar_html(lead["empresa"], lead["cnpj"])
+            }, timeout=25)
 
-                    msg = MIMEMultipart("alternative")
-                    msg["Subject"]  = f"Estimativa de economia tributária para {lead['empresa']}"
-                    msg["From"]     = f"{NOME_REMETENTE} <{email_user}>"
-                    msg["To"]       = lead["email"]
-                    msg["Reply-To"] = EMAIL_RESPOSTA
-                    msg.attach(MIMEText(montar_html(lead["empresa"], lead["cnpj"]), "html", "utf-8"))
-
-                    smtp.sendmail(email_user, lead["email"], msg.as_string())
-                    requests.post(WEBHOOK_PLANILHA, json={
-                        "token": TOKEN_SEGURANCA,
-                        "linha": lead["linha"],
-                        "conta": email_user
-                    }, timeout=15)
-
-                    enviados_conta += 1
-                    print(f"[{email_user}] Enviado ({enviados_conta}/{limite_hora}) -> {lead['empresa']}")
-                    time.sleep(random.uniform(4.0, 8.0))
-        except Exception as e:
-            print(f"Conta {email_user} pausada ou cota atingida: {e}")
+            if "OK" in r.text:
+                requests.post(WEBHOOK_PLANILHA, json={
+                    "token": TOKEN_SEGURANCA,
+                    "linha": lead["linha"],
+                    "conta": email_user
+                }, timeout=15)
+                enviados_conta += 1
+                print(f"[{email_user}] Enviado ({enviados_conta}/{limite_hora}) -> {lead['empresa']}")
+                time.sleep(random.uniform(3.0, 6.0))
+            else:
+                print(f"Conta {email_user} pausada ou cota atingida: {r.text[:120]}")
+                break
 
 if __name__ == "__main__":
     executar()
