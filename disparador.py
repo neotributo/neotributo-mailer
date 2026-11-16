@@ -10,15 +10,15 @@ TOKEN_SEGURANCA  = "NEOTRIBUTO2026"
 CONTAS_SMTP_JSON = os.environ.get("CONTAS_SMTP_JSON", "[]")
 
 def montar_html(empresa, cnpj):
-        ref = urllib.parse.quote(cnpj or empresa)
-        link_sim = "https://" + "neotributo.com.br/agendar?ref=" + ref
-        link_wpp = "https://" + "wa.me/551151977044?text=" + urllib.parse.quote(
+    ref = urllib.parse.quote(cnpj or empresa)
+    link_sim = "https://" + "neotributo.com.br/agendar?ref=" + ref
+    link_wpp = "https://" + "wa.me/551151977044?text=" + urllib.parse.quote(
         f"Olá, gostaria de solicitar uma simulação gratuita para {empresa}"
     )
-        link_site = "https://" + "neotributo.com.br"
-        foto_url  = "https://" + "raw." + "githubusercontent.com" + "/neotributo/neotributo-mailer/main/NEOTRIBUTO_Interno_panoramica_email.png"
+    link_site = "https://" + "neotributo.com.br"
+    foto_url  = "https://" + "raw." + "githubusercontent.com" + "/neotributo/neotributo-mailer/main/NEOTRIBUTO_Interno_panoramica_email.png"
 
-    return f"""<!DOCTYPE html>
+return f"""<!DOCTYPE html>
 <html lang="pt-BR">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
 <body style="margin:0;padding:0;background:#eef3f7;font-family:Arial,Helvetica,sans-serif;color:#172033;">
