@@ -59,7 +59,7 @@ def montar_html(empresa, cnpj):
           </div>
         </td></tr>
                 <tr><td style="padding:18px 42px 8px;">
-                   <img src="https://google.com" width="556" alt="Escritório NEOTRIBUTO" style="display:block;width:100%;max-width:556px;height:auto;border-radius:12px;border:0;">
+                          <img src="cid:escritorio" width="556" alt="Escritório NEOTRIBUTO" style="display:block;width:100%;max-width:556px;height:auto;border-radius:12px;border:0;">
 
         <tr><td style="padding:6px 42px 36px;text-align:center;">
           <div style="font-size:16px;font-weight:bold;color:#071b33;margin-bottom:8px;">Quer saber qual é a estimativa exata para o cenário da {empresa}?</div>
