@@ -58,6 +58,10 @@ def montar_html(empresa, cnpj):
             <p style="margin:0;font-size:14px;line-height:23px;color:#303b4d;">Você não paga absolutamente nada para fazermos o diagnóstico inicial nem durante a análise. Nossa remuneração ocorre exclusivamente sobre o resultado efetivamente gerado no caixa da sua empresa.</p>
           </div>
         </td></tr>
+                <tr><td style="padding:18px 42px 8px;">
+          <img src="https:lh3//googleusercontent.com/d/16TGzqEc9h1J2FCXIdXSZ_lIUnEXqRcYD" width="556" alt="Escritório NEOTRIBUTO" style="display:block;width:100%;max-width:556px;height:auto;border-radius:12px;border:0;">
+        </td></tr>
+
         <tr><td style="padding:6px 42px 36px;text-align:center;">
           <div style="font-size:16px;font-weight:bold;color:#071b33;margin-bottom:8px;">Quer saber qual é a estimativa exata para o cenário da {empresa}?</div>
           <p style="margin:0 0 20px;font-size:15px;color:#556274;">Responda a este e-mail com um <strong>"OK"</strong> ou acesse nossos canais oficiais abaixo:</p>
