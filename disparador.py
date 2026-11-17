@@ -100,12 +100,19 @@ def executar():
             lead = fila_leads[ponteiro]
             ponteiro += 1
             assunto = f"Estimativa de economia tributária para {lead['empresa']}"
-            r = requests.post(url_disparo, json={
+                        payload = json.dumps({
                 "token": TOKEN_SEGURANCA,
                 "para": lead["email"],
                 "assunto": assunto,
                 "html": montar_html(lead["empresa"], lead["cnpj"])
-            }, timeout=25)
+            })
+            r = requests.post(
+                url_disparo,
+                data=payload,
+                headers={"Content-Type": "text/plain;charset=utf-8"},
+                timeout=25
+            )
+
 
             if "OK" in r.text:
                 requests.post(WEBHOOK_PLANILHA, json={
