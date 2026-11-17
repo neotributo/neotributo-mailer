@@ -113,7 +113,7 @@ def executar():
                 timeout=25
             )
 
-                        if "OK" in r.text:
+            if "OK" in r.text:
                 requests.post(WEBHOOK_PLANILHA, json={
                     "token": TOKEN_SEGURANCA,
                     "linha": lead["linha"],
