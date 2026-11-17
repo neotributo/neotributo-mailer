@@ -93,14 +93,14 @@ def executar():
             break
         email_user  = conta["email"]
         url_disparo = conta["url"]
-        limite_hora = int(conta.get("limite_hora", 4))
+        limite_hora = int(conta.get("limite_hora", 2))
         enviados_conta = 0
 
         while enviados_conta < limite_hora and ponteiro < len(fila_leads):
             lead = fila_leads[ponteiro]
             ponteiro += 1
             assunto = f"Estimativa de economia tributária para {lead['empresa']}"
-                        payload = json.dumps({
+            payload = json.dumps({
                 "token": TOKEN_SEGURANCA,
                 "para": lead["email"],
                 "assunto": assunto,
@@ -112,7 +112,6 @@ def executar():
                 headers={"Content-Type": "text/plain;charset=utf-8"},
                 timeout=25
             )
-
 
             if "OK" in r.text:
                 requests.post(WEBHOOK_PLANILHA, json={
