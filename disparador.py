@@ -1,13 +1,45 @@
 import os
+import io
+import re
+import csv
 import json
 import time
 import random
 import urllib.parse
 import requests
 
+ID_PLANILHA      = "COLE_AQUI_O_ID_DA_SUA_PLANILHA"
 WEBHOOK_PLANILHA = os.environ.get("WEBHOOK_PLANILHA", "")
 TOKEN_SEGURANCA  = "NEOTRIBUTO2026"
 CONTAS_SMTP_JSON = os.environ.get("CONTAS_SMTP_JSON", "[]")
+
+def carregar_fila_direta():
+    url_csv = f"https://google.com{ID_PLANILHA}/gviz/tq?tqx=out:csv&sheet=Leads"
+    resp = requests.get(url_csv, timeout=30)
+    resp.encoding = "utf-8"
+    leitor = csv.DictReader(io.StringIO(resp.text))
+    
+    fila = []
+    for numero_linha, row in enumerate(leitor, start=2):
+        empresa      = (row.get("Empresa") or "").strip()
+        cnpj         = (row.get("CNPJ") or "").strip()
+        email        = (row.get("E-mail") or "").strip().lower()
+        status_email = (row.get("Status E-mail") or "").strip().lower()
+        status_crm   = (row.get("Status CRM") or "").strip().lower()
+        
+        eh_mei = bool(re.search(r"\d{11}$", empresa) or re.match(r"^\d{2}\.\d{3}\.\d{3}", empresa))
+        email_valido = ("v" in status_email and "lido" in status_email)
+        
+        if not eh_mei and status_crm == "novo" and email_valido and "@" in email and "." in email:
+            fila.append({
+                "linha": numero_linha,
+                "empresa": empresa,
+                "cnpj": cnpj,
+                "email": email
+            })
+            if len(fila) >= 60:
+                break
+    return fila
 
 def montar_html(empresa, cnpj):
     ref = urllib.parse.quote(cnpj or empresa)
@@ -83,8 +115,7 @@ def montar_html(empresa, cnpj):
 
 def executar():
     contas = json.loads(CONTAS_SMTP_JSON)
-    resp = requests.get(f"{WEBHOOK_PLANILHA}?action=fila_github&token={TOKEN_SEGURANCA}", timeout=30)
-    fila_leads = resp.json()
+    fila_leads = carregar_fila_direta()
     print(f"Leads carregados da planilha: {len(fila_leads)}")
 
     ponteiro = 0
@@ -111,28 +142,3 @@ def executar():
                 data=payload,
                 headers={"Content-Type": "text/plain;charset=utf-8"},
                 timeout=25
-            )
-
-            if "OK" in r.text:
-                requests.post(WEBHOOK_PLANILHA, json={
-                    "token": TOKEN_SEGURANCA,
-                    "linha": lead["linha"],
-                    "conta": email_user
-                }, timeout=15)
-                enviados_conta += 1
-                print(f"[{email_user}] Enviado ({enviados_conta}/{limite_hora}) -> {lead['empresa']}")
-                time.sleep(random.uniform(3.0, 6.0))
-            elif "Invalid email" in r.text:
-                print(f"E-mail inválido pulado na linha {lead['linha']}: {lead['email']}")
-                requests.post(WEBHOOK_PLANILHA, json={
-                    "token": TOKEN_SEGURANCA,
-                    "linha": lead["linha"],
-                    "conta": "Erro E-mail"
-                }, timeout=15)
-                continue
-            else:
-                print(f"Conta {email_user} pausada ou cota atingida: {r.text[:120]}")
-                break
-
-if __name__ == "__main__":
-    executar()
