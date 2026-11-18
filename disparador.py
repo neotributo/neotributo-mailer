@@ -137,12 +137,8 @@ def executar():
                 "assunto": assunto,
                 "html": montar_html(lead["empresa"], lead["cnpj"])
             })
-            r = requests.post(
-                url_disparo,
-                data=payload,
-                headers={"Content-Type": "text/plain;charset=utf-8"},
-                timeout=25
-            cabecalhos = {"Content-Type": "text/plain;charset=utf-8"}
+            
+                        cabecalhos = {"Content-Type": "text/plain;charset=utf-8"}
             r = requests.post(url_disparo, data=payload, headers=cabecalhos, timeout=25)
 
             if "OK" in r.text:
