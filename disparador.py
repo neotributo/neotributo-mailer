@@ -142,3 +142,29 @@ def executar():
                 data=payload,
                 headers={"Content-Type": "text/plain;charset=utf-8"},
                 timeout=25
+            cabecalhos = {"Content-Type": "text/plain;charset=utf-8"}
+            r = requests.post(url_disparo, data=payload, headers=cabecalhos, timeout=25)
+
+            if "OK" in r.text:
+                requests.post(WEBHOOK_PLANILHA, json={
+                    "token": TOKEN_SEGURANCA,
+                    "linha": lead["linha"],
+                    "conta": email_user
+                }, timeout=15)
+                enviados_conta += 1
+                print(f"[{email_user}] Enviado ({enviados_conta}/{limite_hora}) -> {lead['empresa']}")
+                time.sleep(random.uniform(3.0, 6.0))
+            elif "Invalid email" in r.text:
+                print(f"E-mail inválido pulado na linha {lead['linha']}: {lead['email']}")
+                requests.post(WEBHOOK_PLANILHA, json={
+                    "token": TOKEN_SEGURANCA,
+                    "linha": lead["linha"],
+                    "conta": "Erro E-mail"
+                }, timeout=15)
+                continue
+            else:
+                print(f"Conta {email_user} pausada ou cota atingida: {r.text[:120]}")
+                break
+
+if __name__ == "__main__":
+    executar()
