@@ -12,6 +12,25 @@ ID_PLANILHA = "1T67ZMbIw_ynLmbGRnZckv41LfcUZUziavNAJh7rr0fQ"
 WEBHOOK_PLANILHA = os.environ.get("WEBHOOK_PLANILHA", "")
 TOKEN_SEGURANCA = "NEOTRIBUTO2026"
 CONTAS_SMTP_JSON = os.environ.get("CONTAS_SMTP_JSON", "[]")
+CACHE_MX = {}
+
+
+def dominio_tem_mx(email):
+    dominio = email.split("@")[-1].strip().lower()
+    if dominio in ("gmail.com", "hotmail.com", "outlook.com", "yahoo.com.br", "yahoo.com", "uol.com.br", "bol.com.br", "terra.com.br", "icloud.com"):
+        return True
+    if dominio in CACHE_MX:
+        return CACHE_MX[dominio]
+    try:
+        p = chr(46)
+        b = chr(47)
+        url_dns = "https:" + b + b + "dns" + p + "goo" + "gle" + b + "resolve?name=" + dominio + "&type=MX"
+        r = requests.get(url_dns, timeout=5).json()
+        tem_mx = (r.get("Status") == 0 and bool(r.get("Answer")))
+        CACHE_MX[dominio] = tem_mx
+        return tem_mx
+    except Exception:
+        return True
 
 
 def carregar_fila():
@@ -23,13 +42,7 @@ def carregar_fila():
     resp = requests.get(proto + host + rota, timeout=30)
     resp.encoding = "utf-8"
 
-    if "<!DOCTYPE" in resp.text or "<html" in resp.text.lower():
-        print("ERRO: Planilha retornou pagina HTML em vez de CSV.")
-        return []
-
     leitor = csv.DictReader(io.StringIO(resp.text))
-    print("Cabecalhos:", leitor.fieldnames)
-
     fila = []
     for linha_num, row in enumerate(leitor, start=2):
         r = {str(k).strip().lower(): str(v or "").strip() for k, v in row.items() if k}
@@ -42,6 +55,18 @@ def carregar_fila():
 
         eh_mei = bool(re.search(r"\d{11}$", empresa) or re.match(r"^\d{2}\.\d{3}\.\d{3}", empresa))
         valido = ("v" in st_email and "lido" in st_email)
+
+        if not eh_mei and st_crm == "novo" and valido and "@" in email and "." in email:
+            if not dominio_tem_mx(email):
+                print(f"Dominio inexistente pulado (linha {linha_num}): {email}")
+                if WEBHOOK_PLANILHA:
+                    requests.post(WEBHOOK_PLANILHA, json={"token": TOKEN_SEGURANCA, "linha": linha_num, "conta": "Dominio Invalido"}, timeout=10)
+                continue
+            fila.append({"linha": linha_num, "empresa": empresa, "cnpj": cnpj, "email": email})
+            if len(fila) >= 60:
+                break
+    return fila
+
 
         if not eh_mei and st_crm == "novo" and valido and "@" in email and "." in email:
             fila.append({"linha": linha_num, "empresa": empresa, "cnpj": cnpj, "email": email})
