@@ -14,7 +14,8 @@ TOKEN_SEGURANCA  = "NEOTRIBUTO2026"
 CONTAS_SMTP_JSON = os.environ.get("CONTAS_SMTP_JSON", "[]")
 
 def carregar_fila_direta():
-    url_csv = "https://" + "docs.google.com/spreadsheets/d/" + ID_PLANILHA + "/gviz/tq?tqx=out:csv&sheet=Leads"
+        url_csv = "https://" + "://google.com" + "sheets/d/" + ID_PLANILHA + "/gviz/tq?tqx=out:csv&sheet=Leads"
+
     resp = requests.get(url_csv, timeout=30)
     resp.encoding = "utf-8"
     leitor = csv.DictReader(io.StringIO(resp.text))
@@ -24,7 +25,8 @@ def carregar_fila_direta():
         row_limpa    = {str(k).strip().lower(): str(v or "").strip() for k, v in row.items() if k}
         empresa      = row_limpa.get("empresa", "")
         cnpj         = row_limpa.get("cnpj", "")
-        email_bruto  = row_limpa.get("e-mail", "") or row_limpa.get("email", "")
+                email        = re.split(r"[,;]", email_bruto)[0].strip().lower()
+
         email        = re.split(r"[,;]", email_bruto)[0].strip().lower()
         status_email = row_limpa.get("status e-mail", "").lower()
         status_crm   = row_limpa.get("status crm", "").lower()
