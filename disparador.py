@@ -8,19 +8,27 @@ import random
 import urllib.parse
 import requests
 
-ID_PLANILHA      = "1T67ZMbIw_ynLmbGRnZckv41LfcUZUziavNAJh7rr0fQ"
+ID_PLANILHA = "1T67ZMbIw_ynLmbGRnZckv41LfcUZUziavNAJh7rr0fQ"
 WEBHOOK_PLANILHA = os.environ.get("WEBHOOK_PLANILHA", "")
-TOKEN_SEGURANCA  = "NEOTRIBUTO2026"
+TOKEN_SEGURANCA = "NEOTRIBUTO2026"
 CONTAS_SMTP_JSON = os.environ.get("CONTAS_SMTP_JSON", "[]")
 
 
 def carregar_fila():
-    dominio = "docs." + "google.com"
-    caminho = "/spread" + "sheets/d/" + ID_PLANILHA + "/gviz/tq?tqx=out:csv&sheet=Leads"
-    url_csv = "https://" + dominio + caminho
-    resp = requests.get(url_csv, timeout=30)
+    p = chr(46)
+    b = chr(47)
+    proto = "https:" + b + b
+    host = "docs" + p + "goo" + "gle" + p + "com"
+    rota = b + "spread" + "sheets" + b + "d" + b + ID_PLANILHA + b + "gviz" + b + "tq?tqx=out:csv&sheet=Leads"
+    resp = requests.get(proto + host + rota, timeout=30)
     resp.encoding = "utf-8"
+
+    if "<!DOCTYPE" in resp.text or "<html" in resp.text.lower():
+        print("ERRO: Planilha retornou pagina HTML em vez de CSV.")
+        return []
+
     leitor = csv.DictReader(io.StringIO(resp.text))
+    print("Cabecalhos:", leitor.fieldnames)
 
     fila = []
     for linha_num, row in enumerate(leitor, start=2):
@@ -43,11 +51,20 @@ def carregar_fila():
 
 
 def montar_html(empresa, cnpj):
+    p = chr(46)
+    b = chr(47)
+    proto = "https:" + b + b
     ref = urllib.parse.quote(cnpj or empresa)
-    s_sim = "neotributo.com.br/agendar?ref=" + ref
-    s_wpp = "wa.me/551151977044?text=" + urllib.parse.quote(f"Simulacao gratuita para {empresa}")
-    s_site = "neotributo.com.br"
-    s_foto = "raw." + "github" + "://usercontent.com"
+
+    u_sim = proto + "neotributo" + p + "com" + p + "br" + b + "agendar?ref=" + ref
+    u_wpp = proto + "wa" + p + "me" + b + "551151977044?text=" + urllib.parse.quote(f"Simulacao gratuita para {empresa}")
+    u_site = proto + "neotributo" + p + "com" + p + "br"
+    u_foto = (
+        proto
+        + "raw" + p + "git" + "hubuser" + "content" + p + "com"
+        + b + "neotributo" + b + "neotributo-mailer" + b + "main"
+        + b + "NEOTRIBUTO_Interno_panoramica_email" + p + "png"
+    )
 
     t = chr(60)
     f = chr(62)
@@ -69,16 +86,16 @@ def montar_html(empresa, cnpj):
         f"{t}/ul{f}",
         f"{t}p{f}{t}b{f}Passivo Fiscal (PGFN):{t}/b{f} Tambem atuamos na negociacao, revisao de CAPAG e regularizacao de debitos inscritos na PGFN.{t}/p{f}",
         f"{t}p style='background:#eff6ff;padding:14px;border-radius:8px'{f}{t}b{f}Modelo 100% no exito:{t}/b{f} Zero custo antecipado para diagnostico e analise.{t}/p{f}",
-        f"{t}img src='https://{s_foto}' style='width:100%;border-radius:8px;margin:12px 0'{f}",
+        f"{t}img src='{u_foto}' style='width:100%;border-radius:8px;margin:12px 0'{f}",
         f"{t}p style='text-align:center;margin-top:20px'{f}{t}b{f}Responda OK a este e-mail ou acesse:{t}/b{f}{t}/p{f}",
         f"{t}p style='text-align:center'{f}",
-        f"{t}a href='https://{s_sim}' style='display:inline-block;background:#0e7490;color:#fff;padding:12px 22px;text-decoration:none;border-radius:6px;font-weight:bold;margin:4px'{f}Solicitar Simulacao Gratuita{t}/a{f}",
-        f"{t}a href='https://{s_wpp}' style='display:inline-block;background:#16a34a;color:#fff;padding:12px 22px;text-decoration:none;border-radius:6px;font-weight:bold;margin:4px'{f}Falar no WhatsApp{t}/a{f}",
-        f"{t}a href='https://{s_site}' style='display:inline-block;background:#071b33;color:#fff;padding:12px 22px;text-decoration:none;border-radius:6px;font-weight:bold;margin:4px'{f}Site Oficial NEOTRIBUTO{t}/a{f}",
+        f"{t}a href='{u_sim}' style='display:inline-block;background:#0e7490;color:#fff;padding:12px 22px;text-decoration:none;border-radius:6px;font-weight:bold;margin:4px'{f}Solicitar Simulacao Gratuita{t}/a{f}",
+        f"{t}a href='{u_wpp}' style='display:inline-block;background:#16a34a;color:#fff;padding:12px 22px;text-decoration:none;border-radius:6px;font-weight:bold;margin:4px'{f}Falar no WhatsApp{t}/a{f}",
+        f"{t}a href='{u_site}' style='display:inline-block;background:#071b33;color:#fff;padding:12px 22px;text-decoration:none;border-radius:6px;font-weight:bold;margin:4px'{f}Site Oficial NEOTRIBUTO{t}/a{f}",
         f"{t}/p{f}",
         f"{t}/div{f}",
         f"{t}div style='background:#071b33;padding:20px;color:#94a3b8;font-size:12px;text-align:center'{f}",
-        f"NEOTRIBUTO | Vitoria - Brasilia - Sao Paulo | WhatsApp: +55 (11) 5197-7044 | contato@neotributo.com.br",
+        "NEOTRIBUTO | Vitoria - Brasilia - Sao Paulo | WhatsApp: +55 (11) 5197-7044 | contato@neotributo.com.br",
         f"{t}/div{f}",
         f"{t}/div{f}"
     ]
