@@ -1,4 +1,4 @@
- import os
+import os
 import io
 import re
 import csv
@@ -47,7 +47,7 @@ def montar_html(empresa, cnpj):
     s_sim = "neotributo.com.br/agendar?ref=" + ref
     s_wpp = "wa.me/551151977044?text=" + urllib.parse.quote(f"Simulacao gratuita para {empresa}")
     s_site = "neotributo.com.br"
-    s_foto = "://githubusercontent.com"
+    s_foto = "raw." + "github" + "://usercontent.com"
 
     t = chr(60)
     f = chr(62)
