@@ -68,13 +68,6 @@ def carregar_fila():
     return fila
 
 
-        if not eh_mei and st_crm == "novo" and valido and "@" in email and "." in email:
-            fila.append({"linha": linha_num, "empresa": empresa, "cnpj": cnpj, "email": email})
-            if len(fila) >= 60:
-                break
-    return fila
-
-
 def montar_html(empresa, cnpj):
     p = chr(46)
     b = chr(47)
