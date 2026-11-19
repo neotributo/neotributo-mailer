@@ -98,9 +98,10 @@ def montar_html(empresa, cnpj):
         f"{t}p{f}Empresas do {t}b{f}Lucro Real e Lucro Presumido{t}/b{f} costumam pagar ate {t}b{f}20% a mais em tributos federais{t}/b{f} do que o exigido pela legislacao atual.{t}/p{f}",
         f"{t}p{f}Na {t}b{f}NEOTRIBUTO{t}/b{f}, estruturamos compensacoes administrativas que geram alivio imediato de caixa sem acoes judiciais demoradas:{t}/p{f}",
         f"{t}ul style='background:#f8fafc;padding:16px 32px;border-left:4px solid #0e7490;border-radius:6px'{f}",
-        f"{t}li{f}Recolhimento de R$ 100 mil/mes: economia estimada de {t}b{f}R$ 20.000/mes (R$ 240 mil/ano){t}/b{f}{t}/li{f}",
-        f"{t}li{f}Recolhimento de R$ 500 mil/mes: economia estimada de {t}b{f}R$ 100.000/mes (R$ 1,2 milhao/ano){t}/b{f}{t}/li{f}",
-        f"{t}li{f}Recolhimento de R$ 1 milhao/mes: economia estimada de {t}b{f}R$ 200.000/mes (R$ 2,4 milhoes/ano){t}/b{f}{t}/li{f}",
+        f"{t}li{f}Recolhimento de R$\xa0100\xa0mil/mes: economia estimada de {t}b style='white-space:nowrap'{f}R$\xa020.000/mes (R$\xa0240\xa0mil/ano){t}/b{f}{t}/li{f}",
+        f"{t}li{f}Recolhimento de R$\xa0500\xa0mil/mes: economia estimada de {t}b style='white-space:nowrap'{f}R$\xa0100.000/mes (R$\xa01,2\xa0milhao/ano){t}/b{f}{t}/li{f}",
+        f"{t}li{f}Recolhimento de R$\xa01\xa0milhao/mes: economia estimada de {t}b style='white-space:nowrap'{f}R$\xa0200.000/mes (R$\xa02,4\xa0milhoes/ano){t}/b{f}{t}/li{f}",
+
         f"{t}/ul{f}",
         f"{t}p{f}{t}b{f}Passivo Fiscal (PGFN):{t}/b{f} Tambem atuamos na negociacao, revisao de CAPAG e regularizacao de debitos inscritos na PGFN.{t}/p{f}",
         f"{t}p style='background:#eff6ff;padding:14px;border-radius:8px'{f}{t}b{f}Modelo 100% no exito:{t}/b{f} Zero custo antecipado para diagnostico e analise.{t}/p{f}",
