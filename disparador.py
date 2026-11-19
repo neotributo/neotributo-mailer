@@ -13,28 +13,33 @@ WEBHOOK_PLANILHA = os.environ.get("WEBHOOK_PLANILHA", "")
 TOKEN_SEGURANCA  = "NEOTRIBUTO2026"
 CONTAS_SMTP_JSON = os.environ.get("CONTAS_SMTP_JSON", "[]")
 
+
 def carregar_fila_direta():
-            url_csv = "https://" + "docs." + "://google.com" + "sheets/d/" + ID_PLANILHA + "/gviz/tq?tqx=out:csv&sheet=Leads"
-
-
+    url_csv = (
+        "https://"
+        + "docs."
+        + "://google.com"
+        + "sheets/d/"
+        + ID_PLANILHA
+        + "/gviz/tq?tqx=out:csv&sheet=Leads"
+    )
     resp = requests.get(url_csv, timeout=30)
     resp.encoding = "utf-8"
     leitor = csv.DictReader(io.StringIO(resp.text))
-    
+
     fila = []
     for numero_linha, row in enumerate(leitor, start=2):
-        row_limpa    = {str(k).strip().lower(): str(v or "").strip() for k, v in row.items() if k}
-        empresa      = row_limpa.get("empresa", "")
-                email_bruto  = row_limpa.get("e-mail", "") or row_limpa.get("email", "")
-        email        = re.split(r"[,;]", email_bruto).strip().lower()
-
-        email        = re.split(r"[,;]", email_bruto)[0].strip().lower()
+        row_limpa = {str(k).strip().lower(): str(v or "").strip() for k, v in row.items() if k}
+        empresa = row_limpa.get("empresa", "")
+        cnpj = row_limpa.get("cnpj", "")
+        email_bruto = row_limpa.get("e-mail", "") or row_limpa.get("email", "")
+        email = re.split(r"[,;]", email_bruto)[0].strip().lower()
         status_email = row_limpa.get("status e-mail", "").lower()
-        status_crm   = row_limpa.get("status crm", "").lower()
-        
+        status_crm = row_limpa.get("status crm", "").lower()
+
         eh_mei = bool(re.search(r"\d{11}$", empresa) or re.match(r"^\d{2}\.\d{3}\.\d{3}", empresa))
         email_valido = ("v" in status_email and "lido" in status_email)
-        
+
         if not eh_mei and status_crm == "novo" and email_valido and "@" in email and "." in email:
             fila.append({
                 "linha": numero_linha,
@@ -46,14 +51,20 @@ def carregar_fila_direta():
                 break
     return fila
 
+
 def montar_html(empresa, cnpj):
     ref = urllib.parse.quote(cnpj or empresa)
-    link_sim  = "https://" + "neotributo.com.br/agendar?ref=" + ref
-    link_wpp  = "https://" + "wa.me/551151977044?text=" + urllib.parse.quote(
+    link_sim = "https://" + "neotributo.com.br/agendar?ref=" + ref
+    link_wpp = "https://" + "wa.me/551151977044?text=" + urllib.parse.quote(
         f"Olá, gostaria de solicitar uma simulação gratuita para {empresa}"
     )
     link_site = "https://" + "neotributo.com.br"
-    foto_url  = "https://" + "raw." + "githubusercontent.com" + "/neotributo/neotributo-mailer/main/NEOTRIBUTO_Interno_panoramica_email.png"
+    foto_url = (
+        "https://"
+        + "raw."
+        + "githubusercontent.com"
+        + "/neotributo/neotributo-mailer/main/NEOTRIBUTO_Interno_panoramica_email.png"
+    )
 
     return f"""<!DOCTYPE html>
 <html lang="pt-BR">
@@ -118,6 +129,7 @@ def montar_html(empresa, cnpj):
 </body>
 </html>"""
 
+
 def executar():
     contas = json.loads(CONTAS_SMTP_JSON)
     fila_leads = carregar_fila_direta()
@@ -127,7 +139,7 @@ def executar():
     for conta in contas:
         if ponteiro >= len(fila_leads):
             break
-        email_user  = conta["email"]
+        email_user = conta["email"]
         url_disparo = conta["url"]
         limite_hora = int(conta.get("limite_hora", 2))
         enviados_conta = 0
@@ -140,31 +152,3 @@ def executar():
                 "token": TOKEN_SEGURANCA,
                 "para": lead["email"],
                 "assunto": assunto,
-                "html": montar_html(lead["empresa"], lead["cnpj"])
-            })
-            cabecalhos = {"Content-Type": "text/plain;charset=utf-8"}
-            r = requests.post(url_disparo, data=payload, headers=cabecalhos, timeout=25)
-
-            if "OK" in r.text:
-                requests.post(WEBHOOK_PLANILHA, json={
-                    "token": TOKEN_SEGURANCA,
-                    "linha": lead["linha"],
-                    "conta": email_user
-                }, timeout=15)
-                enviados_conta += 1
-                print(f"[{email_user}] Enviado ({enviados_conta}/{limite_hora}) -> {lead['empresa']}")
-                time.sleep(random.uniform(3.0, 6.0))
-            elif "Invalid email" in r.text:
-                print(f"E-mail inválido pulado na linha {lead['linha']}: {lead['email']}")
-                requests.post(WEBHOOK_PLANILHA, json={
-                    "token": TOKEN_SEGURANCA,
-                    "linha": lead["linha"],
-                    "conta": "Erro E-mail"
-                }, timeout=15)
-                continue
-            else:
-                print(f"Conta {email_user} pausada ou cota atingida: {r.text[:120]}")
-                break
-
-if __name__ == "__main__":
-    executar()
