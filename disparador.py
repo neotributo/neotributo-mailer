@@ -101,7 +101,6 @@ def montar_html(empresa, cnpj):
         f"{t}li{f}Recolhimento de R$\xa0100\xa0mil/mes: economia estimada de {t}b style='white-space:nowrap'{f}R$\xa020.000/mes (R$\xa0240\xa0mil/ano){t}/b{f}{t}/li{f}",
         f"{t}li{f}Recolhimento de R$\xa0500\xa0mil/mes: economia estimada de {t}b style='white-space:nowrap'{f}R$\xa0100.000/mes (R$\xa01,2\xa0milhao/ano){t}/b{f}{t}/li{f}",
         f"{t}li{f}Recolhimento de R$\xa01\xa0milhao/mes: economia estimada de {t}b style='white-space:nowrap'{f}R$\xa0200.000/mes (R$\xa02,4\xa0milhoes/ano){t}/b{f}{t}/li{f}",
-
         f"{t}/ul{f}",
         f"{t}p{f}{t}b{f}Passivo Fiscal (PGFN):{t}/b{f} Tambem atuamos na negociacao, revisao de CAPAG e regularizacao de debitos inscritos na PGFN.{t}/p{f}",
         f"{t}p style='background:#eff6ff;padding:14px;border-radius:8px'{f}{t}b{f}Modelo 100% no exito:{t}/b{f} Zero custo antecipado para diagnostico e analise.{t}/p{f}",
