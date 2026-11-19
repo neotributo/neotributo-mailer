@@ -19,8 +19,7 @@ def carregar_fila():
     b = chr(47)
     proto = "https:" + b + b
     host = "docs" + p + "goo" + "gle" + p + "com"
-        rota = b + "spread" + "sheets" + b + "d" + b + ID_PLANILHA + b + "export?format=csv&gid=0"
-
+    rota = b + "spread" + "sheets" + b + "d" + b + ID_PLANILHA + b + "export?format=csv&gid=0"
     resp = requests.get(proto + host + rota, timeout=30)
     resp.encoding = "utf-8"
 
