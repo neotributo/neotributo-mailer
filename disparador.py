@@ -8,24 +8,26 @@ import random
 import urllib.parse
 import requests
 
-ID_PLANILHA      = "COLE_AQUI_O_ID_DA_SUA_PLANILHA"
+ID_PLANILHA      = "1T67ZMbIw_ynLmbGRnZckv41LfcUZUziavNAJh7rr0fQ"
 WEBHOOK_PLANILHA = os.environ.get("WEBHOOK_PLANILHA", "")
 TOKEN_SEGURANCA  = "NEOTRIBUTO2026"
 CONTAS_SMTP_JSON = os.environ.get("CONTAS_SMTP_JSON", "[]")
 
 def carregar_fila_direta():
-    url_csv = f"https://google.com{ID_PLANILHA}/gviz/tq?tqx=out:csv&sheet=Leads"
+    url_csv = "https://" + "docs.google.com/spreadsheets/d/" + ID_PLANILHA + "/gviz/tq?tqx=out:csv&sheet=Leads"
     resp = requests.get(url_csv, timeout=30)
     resp.encoding = "utf-8"
     leitor = csv.DictReader(io.StringIO(resp.text))
     
     fila = []
     for numero_linha, row in enumerate(leitor, start=2):
-        empresa      = (row.get("Empresa") or "").strip()
-        cnpj         = (row.get("CNPJ") or "").strip()
-        email        = (row.get("E-mail") or "").strip().lower()
-        status_email = (row.get("Status E-mail") or "").strip().lower()
-        status_crm   = (row.get("Status CRM") or "").strip().lower()
+        row_limpa    = {str(k).strip().lower(): str(v or "").strip() for k, v in row.items() if k}
+        empresa      = row_limpa.get("empresa", "")
+        cnpj         = row_limpa.get("cnpj", "")
+        email_bruto  = row_limpa.get("e-mail", "") or row_limpa.get("email", "")
+        email        = re.split(r"[,;]", email_bruto)[0].strip().lower()
+        status_email = row_limpa.get("status e-mail", "").lower()
+        status_crm   = row_limpa.get("status crm", "").lower()
         
         eh_mei = bool(re.search(r"\d{11}$", empresa) or re.match(r"^\d{2}\.\d{3}\.\d{3}", empresa))
         email_valido = ("v" in status_email and "lido" in status_email)
@@ -137,8 +139,7 @@ def executar():
                 "assunto": assunto,
                 "html": montar_html(lead["empresa"], lead["cnpj"])
             })
-            
-                        cabecalhos = {"Content-Type": "text/plain;charset=utf-8"}
+            cabecalhos = {"Content-Type": "text/plain;charset=utf-8"}
             r = requests.post(url_disparo, data=payload, headers=cabecalhos, timeout=25)
 
             if "OK" in r.text:
