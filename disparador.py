@@ -112,8 +112,10 @@ def montar_html(empresa, cnpj):
         f"{t}a href='{u_site}' style='display:inline-block;background:#071b33;color:#fff;padding:12px 22px;text-decoration:none;border-radius:6px;font-weight:bold;margin:4px'{f}Site Oficial NEOTRIBUTO{t}/a{f}",
         f"{t}/p{f}",
         f"{t}/div{f}",
-        f"{t}div style='background:#071b33;padding:20px;color:#94a3b8;font-size:12px;text-align:center'{f}",
-        "NEOTRIBUTO | Vitoria - Brasilia - Sao Paulo | WhatsApp: +55 (11) 5197-7044 | contato@neotributo.com.br",
+        f"{t}div style='background:#071b33;padding:22px;color:#cbd5e1;font-size:12px;text-align:center;line-height:1.6'{f}",
+        f"{t}strong style='color:#ffffff'{f}NEOTRIBUTO{t}/strong{f} | Vitoria - Brasilia - Sao Paulo{t}br{f}",
+        f"WhatsApp: {t}span style='color:#ffffff'{f}+55 (11) 5197-7044{t}/span{f} | {t}span style='color:#ffffff'{f}contato@neotributo.com.br{t}/span{f}{t}br{f}{t}br{f}",
+        f"Nao deseja mais receber nossos comunicados? {t}a href='mailto:contato@neotributo.com.br?subject=Descadastrar%20-%20{urllib.parse.quote(empresa)}' style='color:#67e8f9;text-decoration:underline'{f}Clique aqui para descadastrar{t}/a{f}",
         f"{t}/div{f}",
         f"{t}/div{f}"
     ]
