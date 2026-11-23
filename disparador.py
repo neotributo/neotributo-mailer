@@ -75,47 +75,45 @@ def montar_html(empresa, cnpj):
     ref = urllib.parse.quote(cnpj or empresa)
 
     u_sim = proto + "neotributo" + p + "com" + p + "br" + b + "agendar?ref=" + ref
-    u_wpp = proto + "wa" + p + "me" + b + "551151977044?text=" + urllib.parse.quote(f"Simulacao gratuita para {empresa}")
+    u_wpp = proto + "wa" + p + "me" + b + "551151977044?text=" + urllib.parse.quote(f"Simulação gratuita para {empresa}")
     u_site = proto + "neotributo" + p + "com" + p + "br"
-    u_foto = (
-        proto
-        + "raw" + p + "git" + "hubuser" + "content" + p + "com"
-        + b + "neotributo" + b + "neotributo-mailer" + b + "main"
-        + b + "NEOTRIBUTO_Interno_panoramica_email" + p + "png"
-    )
+    base_raw = proto + "raw" + p + "git" + "hubuser" + "content" + p + "com" + b + "neotributo" + b + "neotributo-mailer" + b + "main" + b
+    u_logo = base_raw + "neotributo-logo" + p + "png"
+    u_foto = base_raw + "NEOTRIBUTO_Interno_panoramica_email" + p + "png"
 
     t = chr(60)
     f = chr(62)
     h = [
-        f"{t}div style='font-family:Arial,sans-serif;max-width:620px;margin:auto;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden'{f}",
-        f"{t}div style='background:#071b33;padding:30px;color:#ffffff'{f}",
-        f"{t}b style='font-size:20px;letter-spacing:1px'{f}NEOTRIBUTO{t}/b{f}",
-        f"{t}h2 style='margin:14px 0 8px;font-size:22px'{f}Estimativa de economia tributaria para {empresa}{t}/h2{f}",
-        f"{t}p style='margin:0;color:#cbd5e1;font-size:14px'{f}Operacoes administrativas de compensacao tributaria com seguranca juridica.{t}/p{f}",
+        f"{t}div style='font-family:Arial,Helvetica,sans-serif;max-width:620px;margin:auto;background:#ffffff;border:1px solid #e2e8f0;border-radius:14px;overflow:hidden'{f}",
+        f"{t}div style='background:#071b33;padding:32px 30px 34px;color:#ffffff'{f}",
+        f"{t}img src='{u_logo}' alt='NEOTRIBUTO' style='height:34px;width:auto;display:block;border:0;margin-bottom:18px'{f}",
+        f"{t}div style='display:inline-block;background:#0e3854;border:1px solid #1e6278;border-radius:999px;padding:5px 12px;font-size:11px;font-weight:bold;letter-spacing:1px;color:#67e8f9;margin-bottom:14px'{f}ASSESSORIA TRIBUTÁRIA &bull; LUCRO REAL &amp; PRESUMIDO{t}/div{f}",
+        f"{t}h2 style='margin:0 0 10px;font-size:23px;line-height:1.3;color:#ffffff'{f}Estimativa de economia tributária para {empresa}{t}/h2{f}",
+        f"{t}p style='margin:0;color:#cbd5e1;font-size:14px;line-height:1.5'{f}Operações administrativas de compensação tributária com segurança jurídica e impacto imediato no fluxo de caixa.{t}/p{f}",
         f"{t}/div{f}",
-        f"{t}div style='padding:28px;color:#1e293b;font-size:15px;line-height:1.6'{f}",
-        f"{t}p{f}Ola, {t}b{f}{empresa}{t}/b{f}.{t}/p{f}",
-        f"{t}p{f}Empresas do {t}b{f}Lucro Real e Lucro Presumido{t}/b{f} costumam pagar ate {t}b{f}20% a mais em tributos federais{t}/b{f} do que o exigido pela legislacao atual.{t}/p{f}",
-        f"{t}p{f}Na {t}b{f}NEOTRIBUTO{t}/b{f}, estruturamos compensacoes administrativas que geram alivio imediato de caixa sem acoes judiciais demoradas:{t}/p{f}",
-        f"{t}ul style='background:#f8fafc;padding:16px 32px;border-left:4px solid #0e7490;border-radius:6px'{f}",
-        f"{t}li{f}Recolhimento de R$\xa0100\xa0mil/mes: economia estimada de {t}b style='white-space:nowrap'{f}R$\xa020.000/mes (R$\xa0240\xa0mil/ano){t}/b{f}{t}/li{f}",
-        f"{t}li{f}Recolhimento de R$\xa0500\xa0mil/mes: economia estimada de {t}b style='white-space:nowrap'{f}R$\xa0100.000/mes (R$\xa01,2\xa0milhao/ano){t}/b{f}{t}/li{f}",
-        f"{t}li{f}Recolhimento de R$\xa01\xa0milhao/mes: economia estimada de {t}b style='white-space:nowrap'{f}R$\xa0200.000/mes (R$\xa02,4\xa0milhoes/ano){t}/b{f}{t}/li{f}",
+        f"{t}div style='padding:28px 30px;color:#1e293b;font-size:15px;line-height:1.65'{f}",
+        f"{t}p style='margin-top:0'{f}Olá, {t}b style='color:#071b33'{f}{empresa}{t}/b{f}.{t}/p{f}",
+        f"{t}p{f}Empresas do {t}b{f}Lucro Real e Lucro Presumido{t}/b{f} costumam pagar até {t}b{f}20% a mais em tributos federais{t}/b{f} do que o exigido pela legislação atual — comprometendo diretamente o capital de giro todos os meses.{t}/p{f}",
+        f"{t}p{f}Na {t}b{f}NEOTRIBUTO{t}/b{f}, estruturamos compensações administrativas que geram alívio imediato de caixa, com total segurança jurídica e sem necessidade de ações judiciais demoradas:{t}/p{f}",
+        f"{t}ul style='background:#f4fbfc;padding:18px 24px 18px 36px;border:1px solid #d7f1f3;border-left:4px solid #0e7490;border-radius:8px;margin:20px 0'{f}",
+        f"{t}li style='margin-bottom:8px'{f}Recolhimento de R$\xa0100\xa0mil/mês: economia estimada de {t}b style='color:#059669;white-space:nowrap'{f}R$\xa020.000/mês (R$\xa0240\xa0mil/ano){t}/b{f}{t}/li{f}",
+        f"{t}li style='margin-bottom:8px'{f}Recolhimento de R$\xa0500\xa0mil/mês: economia estimada de {t}b style='color:#059669;white-space:nowrap'{f}R$\xa0100.000/mês (R$\xa01,2\xa0milhão/ano){t}/b{f}{t}/li{f}",
+        f"{t}li style='margin-bottom:0'{f}Recolhimento de R$\xa01\xa0milhão/mês: economia estimada de {t}b style='color:#059669;white-space:nowrap'{f}R$\xa0200.000/mês (R$\xa02,4\xa0milhões/ano){t}/b{f}{t}/li{f}",
         f"{t}/ul{f}",
-        f"{t}p{f}{t}b{f}Passivo Fiscal (PGFN):{t}/b{f} Tambem atuamos na negociacao, revisao de CAPAG e regularizacao de debitos inscritos na PGFN.{t}/p{f}",
-        f"{t}p style='background:#eff6ff;padding:14px;border-radius:8px'{f}{t}b{f}Modelo 100% no exito:{t}/b{f} Zero custo antecipado para diagnostico e analise.{t}/p{f}",
-        f"{t}img src='{u_foto}' style='width:100%;border-radius:8px;margin:12px 0'{f}",
-        f"{t}p style='text-align:center;margin-top:20px'{f}{t}b{f}Responda OK a este e-mail ou acesse:{t}/b{f}{t}/p{f}",
-        f"{t}p style='text-align:center'{f}",
-        f"{t}a href='{u_sim}' style='display:inline-block;background:#0e7490;color:#fff;padding:12px 22px;text-decoration:none;border-radius:6px;font-weight:bold;margin:4px'{f}Solicitar Simulacao Gratuita{t}/a{f}",
-        f"{t}a href='{u_wpp}' style='display:inline-block;background:#16a34a;color:#fff;padding:12px 22px;text-decoration:none;border-radius:6px;font-weight:bold;margin:4px'{f}Falar no WhatsApp{t}/a{f}",
-        f"{t}a href='{u_site}' style='display:inline-block;background:#071b33;color:#fff;padding:12px 22px;text-decoration:none;border-radius:6px;font-weight:bold;margin:4px'{f}Site Oficial NEOTRIBUTO{t}/a{f}",
+        f"{t}p{f}{t}b style='color:#071b33'{f}Passivo Fiscal (PGFN):{t}/b{f} Também atuamos na negociação, revisão de CAPAG, transação tributária e regularização de débitos inscritos na PGFN.{t}/p{f}",
+        f"{t}div style='background:#eff6ff;border:1px solid #bfdbfe;padding:15px 18px;border-radius:8px;margin:18px 0'{f}{t}b style='color:#071b33'{f}Modelo 100% no êxito:{t}/b{f} Zero custo antecipado para diagnóstico e análise inicial.{t}/div{f}",
+        f"{t}img src='{u_foto}' alt='Escritório NEOTRIBUTO' style='width:100%;border-radius:10px;margin:14px 0;display:block;border:0'{f}",
+        f"{t}p style='text-align:center;margin-top:22px;margin-bottom:14px'{f}{t}b style='color:#071b33'{f}Responda \"OK\" a este e-mail ou acesse nossos canais oficiais:{t}/b{f}{t}/p{f}",
+        f"{t}p style='text-align:center;margin-bottom:8px'{f}",
+        f"{t}a href='{u_sim}' style='display:inline-block;background:#0e7490;color:#ffffff;padding:13px 22px;text-decoration:none;border-radius:7px;font-weight:bold;margin:4px'{f}Solicitar Simulação Gratuita{t}/a{f}",
+        f"{t}a href='{u_wpp}' style='display:inline-block;background:#16a34a;color:#ffffff;padding:13px 22px;text-decoration:none;border-radius:7px;font-weight:bold;margin:4px'{f}Falar no WhatsApp{t}/a{f}",
+        f"{t}a href='{u_site}' style='display:inline-block;background:#071b33;color:#ffffff;padding:13px 22px;text-decoration:none;border-radius:7px;font-weight:bold;margin:4px'{f}Site Oficial NEOTRIBUTO{t}/a{f}",
         f"{t}/p{f}",
         f"{t}/div{f}",
-        f"{t}div style='background:#071b33;padding:22px;color:#cbd5e1;font-size:12px;text-align:center;line-height:1.6'{f}",
-        f"{t}strong style='color:#ffffff'{f}NEOTRIBUTO{t}/strong{f} | Vitoria - Brasilia - Sao Paulo{t}br{f}",
+        f"{t}div style='background:#071b33;padding:24px 20px;color:#cbd5e1;font-size:12px;text-align:center;line-height:1.6'{f}",
+        f"{t}strong style='color:#ffffff;font-size:13px'{f}NEOTRIBUTO{t}/strong{f} | Vitória - Brasília - São Paulo{t}br{f}",
         f"WhatsApp: {t}span style='color:#ffffff'{f}+55 (11) 5197-7044{t}/span{f} | {t}span style='color:#ffffff'{f}contato@neotributo.com.br{t}/span{f}{t}br{f}{t}br{f}",
-        f"Nao deseja mais receber nossos comunicados? {t}a href='mailto:contato@neotributo.com.br?subject=Descadastrar%20-%20{urllib.parse.quote(empresa)}' style='color:#67e8f9;text-decoration:underline'{f}Clique aqui para descadastrar{t}/a{f}",
+        f"Não deseja mais receber nossos comunicados? {t}a href='mailto:contato@neotributo.com.br?subject=Descadastrar%20-%20{urllib.parse.quote(empresa)}' style='color:#67e8f9;text-decoration:underline'{f}Clique aqui para descadastrar{t}/a{f}",
         f"{t}/div{f}",
         f"{t}/div{f}"
     ]
@@ -139,7 +137,8 @@ def executar():
         while enviados < limite and idx < len(fila):
             lead = fila[idx]
             idx += 1
-            assunto = f"Estimativa de economia tributaria para {lead['empresa']}"
+            assunto = f"Estimativa de economia tributária para {lead['empresa']}"
+
             payload = json.dumps({
                 "token": TOKEN_SEGURANCA,
                 "para": lead["email"],
