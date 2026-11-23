@@ -84,7 +84,7 @@ def montar_html(empresa, cnpj):
         + "raw" + p + "git" + "hubuser" + "content" + p + "com"
         + b + "neotributo" + b + "neotributo-mailer" + b + "main" + b
     )
-    u_logo = base_raw + "neotributo-logo" + p + "png"
+    u_logo = base_raw + "neotributo-logo" + p + "png" + p + "png"
     u_foto = base_raw + "NEOTRIBUTO_Interno_panoramica_email" + p + "png"
     u_desc = f"mailto:contato@neotributo.com.br?subject=Descadastrar%20-%20{urllib.parse.quote(empresa)}"
 
